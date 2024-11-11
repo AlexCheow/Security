@@ -2,6 +2,30 @@
 session_start();
 include 'connection.php'; // Database connection
 include 'header_sidebar.php'; // Include header and sidebar
+
+// Check if product_id is provided in the URL
+if (isset($_GET['user_id'])) {
+    $user_id = $_GET['user_id'];
+
+    // Fetch product details from the database
+    $query = "SELECT * FROM users WHERE id = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+
+    // Check if the product exists
+    if (!$user) {
+        $_SESSION['error'] = "Staff not found.";
+        header("Location: view_staff.php");
+        exit();
+    }
+} else {
+    $_SESSION['error'] = "No staff ID provided.";
+    header("Location: view_staff.php");
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -10,47 +34,45 @@ include 'header_sidebar.php'; // Include header and sidebar
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>Add New Product</title>
+    <title>Edit Staff</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="css/dashboard_styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
 <body class="sb-nav-fixed">
-    <!-- Page content -->
+
     <div id="layoutSidenav_content" style="margin-left: 11%; margin-top:3%">
         <main>
             <div class="container-fluid px-4">
-                <h1 class="mt-4">Add New Product</h1>
+                <h1 class="mt-4">Edit Staff</h1>
 
-                <!-- Display error message if any -->
-                <?php /*if (isset($_SESSION['error'])): ?>
-                    <div class="alert alert-danger"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></div>
-                <?php endif; */ ?>
-
-                <!-- Product Form -->
+                <!-- Product Edit Form -->
                 <div class="card mb-4">
                     <div class="card-header">
                         <i class="fas fa-box me-1"></i>
-                        Product Details
+                        Staff Details
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="add_products_code.php">
+                        <form method="POST" action="edit_staff_code.php?user_id=<?php echo $user_id; ?>">
                             <div class="mb-3">
-                                <label for="name" class="form-label">Product Name</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" name="username" value="<?php echo htmlspecialchars($user['username']); ?>" required>
                             </div>
                             <div class="mb-3">
-                                <label for="description" class="form-label">Description</label>
-                                <textarea class="form-control" id="description" name="description" rows="2" required></textarea>
+                                <label for="username" class="form-label">Password</label>
+                                <input type="text" class="form-control" id="password" name="password" value="<?php echo htmlspecialchars($user['password']); ?>" required>
                             </div>
                             <div class="mb-3">
-                                <label for="price" class="form-label">Price</label>
-                                <input type="number" class="form-control" id="price" name="price" step="0.01" required>
+                                <label for="role" class="form-label">Role</label>
+                                <select class="form-control" id="role" name="role" required>
+                                    <option value="Staff" <?php echo ($user['role'] == 'staff') ? 'selected' : ''; ?>>Staff</option>
+                                    <option value="Admin" <?php echo ($user['role'] == 'admin') ? 'selected' : ''; ?>>Admin</option>
+                                </select>
                             </div>
 
                             <!-- Buttons -->
-                            <button type="submit" class="btn btn-primary">Add Product</button>
-                            <a href="view_products.php" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Update Staff</button>
+                            <a href="view_staff.php" class="btn btn-secondary">Cancel</a>
                         </form>
                     </div>
                 </div>

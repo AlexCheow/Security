@@ -10,47 +10,55 @@ include 'header_sidebar.php'; // Include header and sidebar
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>Add New Product</title>
+    <title>Add New Staff</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="css/dashboard_styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
 <body class="sb-nav-fixed">
+
     <!-- Page content -->
     <div id="layoutSidenav_content" style="margin-left: 11%; margin-top:3%">
         <main>
             <div class="container-fluid px-4">
-                <h1 class="mt-4">Add New Product</h1>
+                <h1 class="mt-4">Add New Staff</h1>
 
                 <!-- Display error message if any -->
-                <?php /*if (isset($_SESSION['error'])): ?>
+                <?php if (isset($_SESSION['error'])): ?>
                     <div class="alert alert-danger"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></div>
-                <?php endif; */ ?>
+                <?php endif; ?>
 
                 <!-- Product Form -->
                 <div class="card mb-4">
                     <div class="card-header">
                         <i class="fas fa-box me-1"></i>
-                        Product Details
+                        Staff Details
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="add_products_code.php">
+                        <form method="POST" action="add_staff_code.php">
                             <div class="mb-3">
-                                <label for="name" class="form-label">Product Name</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" name="username" required>
                             </div>
                             <div class="mb-3">
-                                <label for="description" class="form-label">Description</label>
-                                <textarea class="form-control" id="description" name="description" rows="2" required></textarea>
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" name="password" required>
                             </div>
                             <div class="mb-3">
-                                <label for="price" class="form-label">Price</label>
-                                <input type="number" class="form-control" id="price" name="price" step="0.01" required>
+                                <label for="confirmpassword" class="form-label">Confirm Password</label>
+                                <input type="password" class="form-control" id="confirmpassword" name="confirmpassword" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="role" class="form-label">Role</label>
+                                <select class="form-control" id="role" name="role" required>
+                                    <option value="Staff">Staff</option>
+                                    <option value="Admin">Admin</option>
+                                </select>
                             </div>
 
                             <!-- Buttons -->
-                            <button type="submit" class="btn btn-primary">Add Product</button>
-                            <a href="view_products.php" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Add Staff</button>
+                            <a href="view_staff.php" class="btn btn-secondary">Cancel</a>
                         </form>
                     </div>
                 </div>
