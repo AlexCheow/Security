@@ -42,8 +42,8 @@
                     </a>
                     <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                         <nav class="sb-sidenav-menu-nested nav">
-                            <a class="nav-link" href="#">View Products</a>
-                            <a class="nav-link" href="#">Add New Products</a>
+                            <a class="nav-link" href="view_products.php">View Products</a>
+                            <a class="nav-link" href="add_products.php">Add New Products</a>
                         </nav>
                     </div>
                     <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
@@ -53,18 +53,18 @@
                     </a>
                     <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                         <nav class="sb-sidenav-menu-nested nav">
-                            <a class="nav-link" href="#">View Stock Adjusyment List</a>
-                            <a class="nav-link" href="#">Add New Adjustment</a>
+                            <a class="nav-link" href="view_adjustment.php">View Stock Adjusyment List</a>
+                            <a class="nav-link" href="add_adjustment.php">Add New Adjustment</a>
                         </nav>
                     </div>
-                    <div class="sb-sidenav-menu-heading">Addons</div>
+                    <div class="sb-sidenav-menu-heading">Others</div>
                     <a class="nav-link" href="#">
                         <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                        Charts
+                        Manage Stuff
                     </a>
                     <a class="nav-link" href="#">
                         <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                        Tables
+                        Logout
                     </a>
                 </div>
             </div>
