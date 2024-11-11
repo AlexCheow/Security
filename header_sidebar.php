@@ -58,9 +58,9 @@
                         </nav>
                     </div>
                     <div class="sb-sidenav-menu-heading">Others</div>
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="view_staff.php">
                         <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                        Manage Stuff
+                        Manage Staff
                     </a>
                     <a class="nav-link" href="#">
                         <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
