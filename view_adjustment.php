@@ -3,8 +3,20 @@ session_start();
 include 'connection.php'; // Database connection
 include 'header_sidebar.php'; // Include header and sidebar
 
-// Fetch stock adjustments from the database
-$query = "SELECT * FROM StockAdjustments ORDER BY adjustment_date DESC";
+// Define default start and end dates
+$startDate = isset($_GET['startDate']) ? $_GET['startDate'] : '';
+$endDate = isset($_GET['endDate']) ? $_GET['endDate'] : '';
+
+// Modify the query to filter by date range if specified
+$query = "SELECT * FROM StockAdjustments";
+if ($startDate && $endDate) {
+    $query .= " WHERE adjustment_date BETWEEN '$startDate' AND '$endDate'";
+} elseif ($startDate) {
+    $query .= " WHERE adjustment_date >= '$startDate'";
+} elseif ($endDate) {
+    $query .= " WHERE adjustment_date <= '$endDate'";
+}
+$query .= " ORDER BY adjustment_date DESC";
 $result = $conn->query($query);
 ?>
 
@@ -33,6 +45,15 @@ $result = $conn->query($query);
                 <div class="mb-4">
                     <a href="add_adjustment.php" class="btn btn-primary">Add New Adjustment</a>
                 </div>
+
+                <!-- Filter Section with Date Range -->
+                <form method="GET" action="view_adjustment.php" class="mb-4 d-flex align-items-center">
+                    <label for="startDate" class="form-label me-2">From:</label>
+                    <input type="date" id="startDate" name="startDate" value="<?php echo htmlspecialchars($startDate); ?>" class="form-control me-2" style="width: 200px;">
+                    <label for="endDate" class="form-label me-2">To:</label>
+                    <input type="date" id="endDate" name="endDate" value="<?php echo htmlspecialchars($endDate); ?>" class="form-control me-2" style="width: 200px;">
+                    <button type="submit" class="btn btn-secondary">Go</button>
+                </form>
                 
                 <div class="card mb-4">
                     <div class="card-header">
@@ -53,7 +74,7 @@ $result = $conn->query($query);
                                 <?php if ($result->num_rows > 0): ?>
                                     <?php while ($row = $result->fetch_assoc()): ?>
                                         <tr>
-                                            <td><?php echo $row['id']; ?></td>
+                                            <td><?php echo (int) $row['id']; ?></td>
                                             <td><?php echo $row['adjustment_date']; ?></td>
                                             <td><?php echo htmlspecialchars($row['description']); ?></td>
                                             <td>

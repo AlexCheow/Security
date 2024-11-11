@@ -14,33 +14,40 @@ $result = $conn->query($query);
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="Product List" />
-    <meta name="author" content="Admin" />
     <title>View Products</title>
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <link href="css/dashboard_styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
 <body class="sb-nav-fixed">
-    
-    <!-- Page content -->
+
     <div id="layoutSidenav_content" style="margin-left: 11%; margin-top:3%">
         <main>
             <div class="container-fluid px-4">
                 <h1 class="mt-4">Product List</h1>
 
+                <!-- Display success or error messages -->
+                <?php if (isset($_SESSION['message'])): ?>
+                    <div class="alert alert-success"><?php echo $_SESSION['message']; unset($_SESSION['message']); ?></div>
+                <?php endif; ?>
+
+                <?php if (isset($_SESSION['error'])): ?>
+                    <div class="alert alert-danger"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></div>
+                <?php endif; ?>
+
                 <!-- Add New Product Button -->
-                <div class="mb-4">
+                <div class="mb-3">
                     <a href="add_products.php" class="btn btn-primary">Add New Product</a>
                 </div>
-                
+
+                <!-- Products Table -->
                 <div class="card mb-4">
                     <div class="card-header">
                         <i class="fas fa-table me-1"></i>
                         Products
                     </div>
                     <div class="card-body">
-                        <table id="datatablesSimple" class="table table-bordered">
+                        <table id="datatablesSimple">
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -52,32 +59,28 @@ $result = $conn->query($query);
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php if ($result->num_rows > 0): ?>
-                                    <?php while ($row = $result->fetch_assoc()): ?>
-                                        <tr>
-                                            <td><?php echo $row['id']; ?></td>
-                                            <td><?php echo htmlspecialchars($row['name']); ?></td>
-                                            <td><?php echo htmlspecialchars($row['description']); ?></td>
-                                            <td><?php echo '$' . number_format($row['price'], 2); ?></td>
-                                            <td><?php echo $row['stock']; ?></td>
-                                            <td>
-                                                <a href="edit_product.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-warning">Edit</a>
-                                                <a href="delete_product.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this product?');">Delete</a>
-                                            </td>
-                                        </tr>
-                                    <?php endwhile; ?>
-                                <?php else: ?>
+                                <?php while ($product = $result->fetch_assoc()): ?>
                                     <tr>
-                                        <td colspan="6" class="text-center">No products found</td>
+                                        <td><?php echo htmlspecialchars($product['id']); ?></td>
+                                        <td><?php echo htmlspecialchars($product['name']); ?></td>
+                                        <td><?php echo htmlspecialchars($product['description']); ?></td>
+                                        <td><?php echo htmlspecialchars($product['price']); ?></td>
+                                        <td><?php echo htmlspecialchars($product['stock']); ?></td>
+                                        <td>
+                                            <a href="edit_product.php?product_id=<?php echo $product['id']; ?>" class="btn btn-warning btn-sm">Edit</a>
+                                            <a href="delete_product.php?product_id=<?php echo $product['id']; ?>" 
+                                               onclick="return confirm('Are you sure you want to delete this product?');" 
+                                               class="btn btn-danger btn-sm">Delete</a>
+                                        </td>
                                     </tr>
-                                <?php endif; ?>
+                                <?php endwhile; ?>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
         </main>
-        
+
         <footer class="py-4 bg-light mt-auto">
             <div class="container-fluid px-4">
                 <div class="d-flex align-items-center justify-content-between small">
@@ -91,12 +94,14 @@ $result = $conn->query($query);
             </div>
         </footer>
     </div>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2" crossorigin="anonymous"></script>
     <script>
-        // Initialize the DataTable
-        const dataTable = new simpleDatatables.DataTable("#datatablesSimple");
+        // Initialize DataTable for the products table
+        document.addEventListener("DOMContentLoaded", function() {
+            const dataTable = new simpleDatatables.DataTable("#datatablesSimple");
+        });
     </script>
 </body>
 </html>
