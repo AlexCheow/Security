@@ -16,9 +16,9 @@
             <div class="col-md-6 text-center mb-5">
                 <h1 class="heading-section">Welcome</h1>
                 <?php
-                if (isset($_GET['error'])) {
-                    echo "<div style='color:red;'>" . htmlspecialchars($_GET['error']) . "</div>";
-                }
+                //if (isset($_GET['error'])) {
+                //    echo "<div style='color:red;'>" . htmlspecialchars($_GET['error']) . "</div>";
+                //}
                 ?>
             </div>
         </div>
