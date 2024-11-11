@@ -17,13 +17,13 @@ if (isset($_GET['product_id'])) {
 
     // Check if the product exists
     if (!$product) {
-        $_SESSION['error'] = "Product not found.";
-        header("Location: view_products.php");
+        //$_SESSION['error'] = "Product not found.";
+        //header("Location: view_products.php");
         exit();
     }
 } else {
-    $_SESSION['error'] = "No product ID provided.";
-    header("Location: view_products.php");
+    //$_SESSION['error'] = "No product ID provided.";
+    //header("Location: view_products.php");
     exit();
 }
 ?>

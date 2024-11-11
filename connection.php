@@ -10,7 +10,7 @@ $database = 'admin'; // Replace with your database name
 $conn = new mysqli($host, $username, $password, $database);
 
 // Check the connection
-if ($conn->connect_error) {
+/*if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
-}
+}*/
 ?>

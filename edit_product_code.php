@@ -17,7 +17,7 @@ if (isset($_GET['product_id']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($update_stmt->execute()) {
         $_SESSION['message'] = "Product updated successfully.";
     } else {
-        $_SESSION['error'] = "Error updating product: " . $conn->error;
+        //$_SESSION['error'] = "Error updating product: " . $conn->error;
     }
 
     // Redirect back to view_products.php
@@ -25,7 +25,7 @@ if (isset($_GET['product_id']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
     exit();
 } else {
     // Redirect with error if product_id is not provided or request is not POST
-    $_SESSION['error'] = "Invalid request.";
-    header("Location: view_products.php");
+    /*$_SESSION['error'] = "Invalid request.";
+    header("Location: view_products.php");*/
     exit();
 }
