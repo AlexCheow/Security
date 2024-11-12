@@ -1,4 +1,15 @@
-<!-- header_sidebar.php -->
+<?php
+session_start();
+include 'connection.php'; // Database connection
+
+// Check if the user is logged in and has a role assigned
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['role'])) {
+    // Redirect to login page if not authenticated
+    header("Location: index.php");
+    exit();
+}
+?>
+
 <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
     <a class="navbar-brand ps-3" href="dashboard.php" id="currentTime"></a>
     <!-- Sidebar Toggle-->
@@ -18,7 +29,7 @@
                 <li><a class="dropdown-item" href="#!">Settings</a></li>
                 <li><a class="dropdown-item" href="#!">Activity Log</a></li>
                 <li><hr class="dropdown-divider" /></li>
-                <li><a class="dropdown-item" href="#!">Logout</a></li>
+                <li><a class="dropdown-item" href="logout.php">Logout</a></li>
             </ul>
         </li>
     </ul>
@@ -35,42 +46,47 @@
                         Dashboard
                     </a>
                     <div class="sb-sidenav-menu-heading">Stocks</div>
-                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseProducts" aria-expanded="false" aria-controls="collapseProducts">
                         <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
                         Products
                         <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                     </a>
-                    <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                    <div class="collapse" id="collapseProducts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                         <nav class="sb-sidenav-menu-nested nav">
                             <a class="nav-link" href="view_products.php">View Products</a>
                             <a class="nav-link" href="add_products.php">Add New Products</a>
                         </nav>
                     </div>
-                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseStocks" aria-expanded="false" aria-controls="collapseStocks">
                         <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
                         Stocks Adjustment
                         <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                     </a>
-                    <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                    <div class="collapse" id="collapseStocks" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                         <nav class="sb-sidenav-menu-nested nav">
-                            <a class="nav-link" href="view_adjustment.php">View Stock Adjusyment List</a>
+                            <a class="nav-link" href="view_adjustment.php">View Stock Adjustment List</a>
                             <a class="nav-link" href="add_adjustment.php">Add New Adjustment</a>
                         </nav>
                     </div>
                     <div class="sb-sidenav-menu-heading">Others</div>
-                    <a class="nav-link" href="view_staff.php">
-                        <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                        Manage Staff
-                    </a>
-                    <a class="nav-link" href="#">
-                        <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+                    
+                    <!-- Only show Manage Staff for admin users -->
+                    <?php if ($_SESSION['role'] === 'admin'): ?>
+                        <a class="nav-link" href="view_staff.php">
+                            <div class="sb-nav-link-icon"><i class="fas fa-user-cog"></i></div>
+                            Manage Staff
+                        </a>
+                    <?php endif; ?>
+                    
+                    <a class="nav-link" href="logout.php">
+                        <div class="sb-nav-link-icon"><i class="fas fa-sign-out-alt"></i></div>
                         Logout
                     </a>
                 </div>
             </div>
             <div class="sb-sidenav-footer">
                 <div class="small">Logged in as:</div>
-                Admin
+                <?php echo htmlspecialchars($_SESSION['role']); ?>
             </div>
         </nav>
     </div>

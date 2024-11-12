@@ -2,31 +2,53 @@
 session_start();
 include 'connection.php'; // Database connection
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $adjustment_date = $_POST['adjustment_date'];
-    $description = $_POST['description'];
-    $products = $_POST['product'];
-    $quantities = $_POST['quantity'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['csrf_token']) && $_POST['csrf_token'] === $_SESSION['csrf_token']) {
+    // Sanitize and validate input data
+    $adjustment_date = filter_input(INPUT_POST, 'adjustment_date', FILTER_SANITIZE_STRING);
+    $description = filter_input(INPUT_POST, 'description', FILTER_SANITIZE_STRING);
+    $products = $_POST['product'] ?? [];
+    $quantities = $_POST['quantity'] ?? [];
     
-    $adjustment_type = "Stock Adjustment";
+    $adjustment_type = "Stock Adjustment"; // Fixed adjustment type
 
+    if (empty($products) || empty($quantities)) {
+        $_SESSION['error'] = "Please select at least one product and specify a quantity.";
+        header("Location: add_adjustment.php");
+        exit();
+    }
+
+    // Start a transaction
     $conn->begin_transaction();
 
     try {
+        // Insert into StockAdjustments table
         $query = "INSERT INTO StockAdjustments (adjustment_date, description) VALUES (?, ?)";
         $stmt = $conn->prepare($query);
+        if (!$stmt) {
+            throw new Exception("Preparation of StockAdjustments query failed: " . $conn->error);
+        }
         $stmt->bind_param("ss", $adjustment_date, $description);
-        $stmt->execute();
+        if (!$stmt->execute()) {
+            throw new Exception("Execution of StockAdjustments insert query failed: " . $stmt->error);
+        }
         $adjustment_id = $stmt->insert_id;
 
+        // Prepare query for StockAdjustmentDetails insertion
         $detail_query = "INSERT INTO StockAdjustmentDetails (adjustment_id, product_id, adjustment_type, quantity) VALUES (?, ?, ?, ?)";
         $detail_stmt = $conn->prepare($detail_query);
+        if (!$detail_stmt) {
+            throw new Exception("Preparation of StockAdjustmentDetails query failed: " . $conn->error);
+        }
 
         foreach ($products as $index => $product_id) {
-            $quantity = $quantities[$index];
+            $product_id = (int)$product_id; // Sanitize product ID
+            $quantity = (int)$quantities[$index]; // Sanitize quantity
 
             $stock_check_query = "SELECT stock FROM Products WHERE id = ?";
             $stock_check_stmt = $conn->prepare($stock_check_query);
+            if (!$stock_check_stmt) {
+                throw new Exception("Preparation of stock check query failed: " . $conn->error);
+            }
             $stock_check_stmt->bind_param("i", $product_id);
             $stock_check_stmt->execute();
             $stock_result = $stock_check_stmt->get_result();
@@ -41,12 +63,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 $detail_stmt->bind_param("iisi", $adjustment_id, $product_id, $adjustment_type, $quantity);
-                $detail_stmt->execute();
+                if (!$detail_stmt->execute()) {
+                    throw new Exception("Execution of StockAdjustmentDetails insert query failed: " . $detail_stmt->error);
+                }
 
                 $update_stock_query = "UPDATE Products SET stock = stock + ? WHERE id = ?";
                 $update_stock_stmt = $conn->prepare($update_stock_query);
+                if (!$update_stock_stmt) {
+                    throw new Exception("Preparation of stock update query failed: " . $conn->error);
+                }
                 $update_stock_stmt->bind_param("ii", $quantity, $product_id);
-                $update_stock_stmt->execute();
+                if (!$update_stock_stmt->execute()) {
+                    throw new Exception("Execution of stock update query failed: " . $update_stock_stmt->error);
+                }
             } else {
                 throw new Exception("Product ID $product_id not found.");
             }
@@ -62,5 +91,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: add_adjustment.php");
         exit();
     }
+} else {
+    $_SESSION['error'] = "Invalid request.";
+    header("Location: add_adjustment.php");
+    exit();
 }
 ?>

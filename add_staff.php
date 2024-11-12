@@ -1,6 +1,14 @@
 <?php
 session_start();
 include 'connection.php'; // Database connection
+
+// Check if user is logged in and has the appropriate role (e.g., admin)
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    $_SESSION['error'] = "Unauthorized access.";
+    header("Location: view_staff.php");
+    exit();
+}
+
 include 'header_sidebar.php'; // Include header and sidebar
 ?>
 
@@ -16,8 +24,6 @@ include 'header_sidebar.php'; // Include header and sidebar
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
 <body class="sb-nav-fixed">
-
-    <!-- Page content -->
     <div id="layoutSidenav_content" style="margin-left: 11%; margin-top:3%">
         <main>
             <div class="container-fluid px-4">
@@ -25,28 +31,28 @@ include 'header_sidebar.php'; // Include header and sidebar
 
                 <!-- Display error message if any -->
                 <?php if (isset($_SESSION['error'])): ?>
-                    <div class="alert alert-danger"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></div>
+                    <div class="alert alert-danger"><?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?></div>
                 <?php endif; ?>
 
-                <!-- Product Form -->
+                <!-- Staff Form -->
                 <div class="card mb-4">
                     <div class="card-header">
                         <i class="fas fa-box me-1"></i>
                         Staff Details
                     </div>
                     <div class="card-body">
-                        <form method="POST" action="add_staff_code.php">
+                        <form method="POST" action="add_staff_code.php" onsubmit="return validatePasswords()">
                             <div class="mb-3">
                                 <label for="username" class="form-label">Username</label>
-                                <input type="text" class="form-control" id="username" name="username" required>
+                                <input type="text" class="form-control" id="username" name="username" value="" autocomplete="off" required pattern="^[a-zA-Z0-9_]{3,20}$" title="Username must be 3-20 characters long, containing only letters, numbers, and underscores.">
                             </div>
                             <div class="mb-3">
                                 <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
+                                <input type="password" class="form-control" id="password" name="password" value="" autocomplete="new-password" required minlength="6" title="Password must be at least 6 characters long.">
                             </div>
                             <div class="mb-3">
                                 <label for="confirmpassword" class="form-label">Confirm Password</label>
-                                <input type="password" class="form-control" id="confirmpassword" name="confirmpassword" required>
+                                <input type="password" class="form-control" id="confirmpassword" name="confirmpassword" value="" autocomplete="new-password" required minlength="6">
                             </div>
                             <div class="mb-3">
                                 <label for="role" class="form-label">Role</label>
@@ -80,6 +86,18 @@ include 'header_sidebar.php'; // Include header and sidebar
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script>
+        function validatePasswords() {
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirmpassword").value;
+
+            if (password !== confirmPassword) {
+                alert("Passwords do not match. Please try again.");
+                return false;
+            }
+            return true;
+        }
+    </script>
 </body>
 </html>
 
