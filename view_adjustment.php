@@ -89,6 +89,7 @@ $result = $stmt->get_result();
                         <table id="datatablesSimple" class="table table-bordered">
                             <thead>
                                 <tr>
+                                    <th>ID</th>
                                     <th>Adjustment Date</th>
                                     <th>Description</th>
                                     <th>Actions</th>
@@ -98,11 +99,14 @@ $result = $stmt->get_result();
                                 <?php if ($result->num_rows > 0): ?>
                                     <?php while ($row = $result->fetch_assoc()): ?>
                                         <tr>
-                                            
+                                            <td><?php echo htmlspecialchars($row['id']); ?></td>
                                             <td><?php echo htmlspecialchars($row['adjustment_date']); ?></td>
                                             <td><?php echo htmlspecialchars($row['description']); ?></td>
                                             <td>
                                                 <a href="view_adjustment_details.php?id=<?php echo urlencode($row['id']); ?>" class="btn btn-sm btn-info">View</a>
+                                                <a href="delete_adjustment.php?id=<?php echo urlencode($row['id']); ?>" 
+                                               onclick="return confirm('Are you sure you want to delete this product?');" 
+                                               class="btn btn-danger btn-sm">Delete</a>
                                             </td>
                                         </tr>
                                     <?php endwhile; ?>

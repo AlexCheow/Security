@@ -95,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['csrf_token']) && $_PO
         if (!$log_stmt) {
             throw new Exception("Preparation of log query failed: " . $conn->error);
         }
-        $log_stmt->bind_param("isss", $user_id, $role, $action);
+        $log_stmt->bind_param("iss", $user_id, $role, $action);
         if (!$log_stmt->execute()) {
             throw new Exception("Execution of log query failed: " . $log_stmt->error);
         }
