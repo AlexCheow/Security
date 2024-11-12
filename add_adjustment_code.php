@@ -2,13 +2,14 @@
 session_start();
 include 'connection.php'; // Database connection
 
+// Check if the user is authenticated and has a valid CSRF token
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['csrf_token']) && $_POST['csrf_token'] === $_SESSION['csrf_token']) {
     // Sanitize and validate input data
     $adjustment_date = filter_input(INPUT_POST, 'adjustment_date', FILTER_SANITIZE_STRING);
     $description = filter_input(INPUT_POST, 'description', FILTER_SANITIZE_STRING);
     $products = $_POST['product'] ?? [];
     $quantities = $_POST['quantity'] ?? [];
-    
+
     $adjustment_type = "Stock Adjustment"; // Fixed adjustment type
 
     if (empty($products) || empty($quantities)) {
@@ -44,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['csrf_token']) && $_PO
             $product_id = (int)$product_id; // Sanitize product ID
             $quantity = (int)$quantities[$index]; // Sanitize quantity
 
+            // Check current stock
             $stock_check_query = "SELECT stock FROM Products WHERE id = ?";
             $stock_check_stmt = $conn->prepare($stock_check_query);
             if (!$stock_check_stmt) {
@@ -67,6 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['csrf_token']) && $_PO
                     throw new Exception("Execution of StockAdjustmentDetails insert query failed: " . $detail_stmt->error);
                 }
 
+                // Update stock in Products table
                 $update_stock_query = "UPDATE Products SET stock = stock + ? WHERE id = ?";
                 $update_stock_stmt = $conn->prepare($update_stock_query);
                 if (!$update_stock_stmt) {
@@ -79,6 +82,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['csrf_token']) && $_PO
             } else {
                 throw new Exception("Product ID $product_id not found.");
             }
+        }
+
+        // Log the action
+        $user_id = $_SESSION['user_id'];
+        $role = $_SESSION['role'];
+        $action = "Added stock adjustment";
+        $details = "Stock adjustment ID: $adjustment_id, Date: $adjustment_date, Description: $description";
+
+        $log_query = "INSERT INTO logs (user_id, role, action, details) VALUES (?, ?, ?, ?)";
+        $log_stmt = $conn->prepare($log_query);
+        if (!$log_stmt) {
+            throw new Exception("Preparation of log query failed: " . $conn->error);
+        }
+        $log_stmt->bind_param("isss", $user_id, $role, $action, $details);
+        if (!$log_stmt->execute()) {
+            throw new Exception("Execution of log query failed: " . $log_stmt->error);
         }
 
         $conn->commit();
