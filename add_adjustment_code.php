@@ -90,12 +90,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['csrf_token']) && $_PO
         $action = "Added stock adjustment";
         $details = "Stock adjustment ID: $adjustment_id, Date: $adjustment_date, Description: $description";
 
-        $log_query = "INSERT INTO logs (user_id, role, action, details) VALUES (?, ?, ?, ?)";
+        $log_query = "INSERT INTO logs (user_id, role, action) VALUES (?, ?, ?)";
         $log_stmt = $conn->prepare($log_query);
         if (!$log_stmt) {
             throw new Exception("Preparation of log query failed: " . $conn->error);
         }
-        $log_stmt->bind_param("isss", $user_id, $role, $action, $details);
+        $log_stmt->bind_param("isss", $user_id, $role, $action);
         if (!$log_stmt->execute()) {
             throw new Exception("Execution of log query failed: " . $log_stmt->error);
         }
