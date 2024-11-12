@@ -3,9 +3,8 @@ session_start();
 include 'connection.php'; // Database connection
 include 'header_sidebar.php'; // Include header and sidebar
 
-
+// Check if the user is authorized
 if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'staff'])) {
-    // Redirect unauthorized users to login or error page
     header("Location: unauthorized.php");
     exit();
 }
@@ -20,7 +19,7 @@ $adjustment_id = (int) $_GET['id'];
 
 // Fetch adjustment details from the database using prepared statements
 $query = "SELECT sa.id AS adjustment_id, sa.adjustment_date, sa.description, sad.product_id, 
-          p.name AS product_name, sad.adjustment_type, sad.quantity 
+          p.name AS product_name, COALESCE(sad.adjustment_type, 'Stock Adjustment') AS adjustment_type, sad.quantity 
           FROM StockAdjustments sa 
           JOIN StockAdjustmentDetails sad ON sa.id = sad.adjustment_id 
           JOIN Products p ON sad.product_id = p.id 
@@ -71,7 +70,7 @@ $result = $stmt->get_result();
                                     <?php while ($row = $result->fetch_assoc()): ?>
                                         <tr>
                                             <td><?php echo htmlspecialchars($row['product_name']); ?></td>
-                                            <td><?php echo htmlspecialchars(ucfirst($row['adjustment_type'])); ?></td>
+                                            <td><?php echo htmlspecialchars($row['adjustment_type'] ?: 'Stock Adjustment'); ?></td>
                                             <td><?php echo htmlspecialchars($row['quantity']); ?></td>
                                         </tr>
                                     <?php endwhile; ?>
