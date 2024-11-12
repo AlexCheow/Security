@@ -3,7 +3,7 @@ session_start();
 include 'connection.php'; // Database connection
 
 // Verify that the user is logged in and has admin privileges
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'staff'])) {
     $_SESSION['error'] = "Unauthorized access.";
     header("Location: view_products.php");
     exit();
