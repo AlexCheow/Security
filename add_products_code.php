@@ -47,29 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $stmt->close();
     
-
-    if ($stmt->execute()) {
-        $product_id = $conn->insert_id;
-        // Log the Action
-        $user_id = $_SESSION['user_id'];
-        $role = $_SESSION['role'];
-        $action = "Add New Product";
-        $details = "Added Product ID: $product_id";
-
-        $sql = "INSERT INTO logs (user_id, role, action, details) VALUES (?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("isss", $user_id, $role, $action, $details);
-        $stmt->execute();
-
-        // Redirect to view_products.php after successful addition
-        header("Location: view_products.php");
-        exit();
-
-    } else {
-        $_SESSION['error'] = "Database error: " . $conn->error;
-        header("Location: add_products.php");
-        exit();
-    }
     }
 }
 
