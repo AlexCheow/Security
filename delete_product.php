@@ -17,7 +17,7 @@ if (isset($_GET['product_id'])) {
         $_SESSION['message'] = "Product deleted successfully.";
     } else {
         // Set an error message in the session if deletion fails
-        //$_SESSION['error'] = "Error deleting product: " . $conn->error;
+        $_SESSION['error'] = "Error deleting product: " . $conn->error;
     }
 
     // Redirect to the products list page
@@ -25,8 +25,8 @@ if (isset($_GET['product_id'])) {
     exit();
 } else {
     // Redirect if product_id is not set
-    /*$_SESSION['error'] = "No product ID provided.";
-    header("Location: view_products.php");*/
+    $_SESSION['error'] = "No product ID provided.";
+    header("Location: view_products.php");
     exit();
 }
 ?>

@@ -19,8 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     } else {
         // Store error message in session if there's an issue with the insertion
-        //$_SESSION['error'] = "Error adding product: " . $conn->error;
-        //header("Location: add_products.php");
+        $_SESSION['error'] = "Error adding product: " . $conn->error;
+        header("Location: add_products.php");
         exit();
     }
 }

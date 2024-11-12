@@ -23,9 +23,9 @@ include 'header_sidebar.php'; // Include header and sidebar
                 <h1 class="mt-4">Add New Product</h1>
 
                 <!-- Display error message if any -->
-                <?php /*if (isset($_SESSION['error'])): ?>
+                <?php if (isset($_SESSION['error'])): ?>
                     <div class="alert alert-danger"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></div>
-                <?php endif; */ ?>
+                <?php endif;  ?>
 
                 <!-- Product Form -->
                 <div class="card mb-4">

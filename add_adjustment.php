@@ -18,9 +18,9 @@
             <div class="container-fluid px-4">
                 <h1 class="mt-4">Add New Stock Adjustment</h1>
 
-                <?php /*if (isset($_SESSION['error'])): ?>
+                <?php if (isset($_SESSION['error'])): ?>
                     <div class="alert alert-danger"><?php //echo $_SESSION['error']; unset($_SESSION['error']); ?></div>
-                <?php endif; */ ?>
+                <?php endif; ?>
 
                 <div class="card mb-4">
                     <div class="card-header">
