@@ -27,10 +27,10 @@
                 <div class="login-wrap p-0">
                     <form action="login_code.php" method="POST" class="signin-form">
                         <div class="form-group">
-                            <input type="text" name="username" class="form-control" placeholder="Username" required>
+                            <input type="text" name="username"  class="form-control" placeholder="Username" value="" autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <input id="password-field" type="password" name="password" class="form-control" placeholder="Password" required>
+                            <input id="password-field" type="password" name="password" class="form-control" placeholder="Password" value="" autocomplete="off" required>
                             <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password"></span>
                         </div>
                         <div class="form-group">

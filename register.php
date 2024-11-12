@@ -72,17 +72,17 @@ $conn->close();
                 <div class="login-wrap p-0">
                     <form action="" method="POST" class="signin-form" onsubmit="return validateForm()">
                         <div class="form-group">
-                            <input type="text" name="username" class="form-control" placeholder="Username" required>
+                            <input type="text" name="username" value="" class="form-control" placeholder="Username" value="" autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <input id="password" type="password" name="password" class="form-control" placeholder="Password" required>
+                            <input id="password" type="password" name="password" value="" class="form-control" placeholder="Password" value="" autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <input id="confirm_password" type="password" name="confirm_password" class="form-control" placeholder="Confirm Password" required>
+                            <input id="confirm_password" type="password" name="confirm_password" value="" class="form-control" placeholder="Confirm Password" autocomplete="off" required>
                         </div>
                         <div class="form-group">
                             <label>
-                                <input type="checkbox" id="privacy_checkbox"> I agree to the <a href="privacy_policy.html" target="_blank">Privacy Policy</a>
+                                <input type="checkbox" id="privacy_checkbox"> I agree to the <a href="privacy_policy.php" target="_blank">Privacy Policy</a>
                             </label>
                         </div>
                         <div class="form-group">
