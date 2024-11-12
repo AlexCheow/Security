@@ -19,12 +19,11 @@ if (isset($_GET['product_id']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
         // Log the Action
         $user_id = $_SESSION['user_id'];
         $role = $_SESSION['role'];
-        $action = "Edit Product";
-        $details = "Updated Product ID: $product_id";
+        $action = "Updated Product ID: $product_id";
 
-        $sql = "INSERT INTO logs (user_id, role, action, details) VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO logs (user_id, role, action) VALUES (?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("isss", $user_id, $role, $action, $details);
+        $stmt->bind_param("iss", $user_id, $role, $action);
         $stmt->execute();
 
         $_SESSION['message'] = "Product updated successfully.";
