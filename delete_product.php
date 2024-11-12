@@ -23,12 +23,11 @@ if (isset($_GET['product_id']) && filter_var($_GET['product_id'], FILTER_VALIDAT
             // Log the action with details
             $user_id = $_SESSION['user_id'];
             $role = $_SESSION['role'];
-            $action = "Deleted Product";
-            $details = "Deleted Product ID: $product_id";
+            $action = "Deleted Product ID: $product_id";
 
-            $log_query = "INSERT INTO logs (user_id, role, action, details) VALUES (?, ?, ?, ?)";
+            $log_query = "INSERT INTO logs (user_id, role, action) VALUES (?, ?, ?)";
             if ($log_stmt = $conn->prepare($log_query)) {
-                $log_stmt->bind_param("isss", $user_id, $role, $action, $details);
+                $log_stmt->bind_param("iss", $user_id, $role, $action);
                 $log_stmt->execute();
                 $log_stmt->close();
             }
