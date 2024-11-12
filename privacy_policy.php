@@ -70,7 +70,7 @@
     </div>
 
     <div class="text-center mt-4">
-        <a href="register.php" class="btn btn-primary"><i class="fa fa-home me-2"></i>Back to Home</a>
+        <a href="register.php" class="btn btn-primary"><i class="fa fa-home me-2"></i>Back to Register</a>
     </div>
 </div>
 
