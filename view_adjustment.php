@@ -89,7 +89,6 @@ $result = $stmt->get_result();
                         <table id="datatablesSimple" class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>Adjustment ID</th>
                                     <th>Adjustment Date</th>
                                     <th>Description</th>
                                     <th>Actions</th>
@@ -99,7 +98,7 @@ $result = $stmt->get_result();
                                 <?php if ($result->num_rows > 0): ?>
                                     <?php while ($row = $result->fetch_assoc()): ?>
                                         <tr>
-                                            <td><?php echo (int) $row['id']; ?></td>
+                                            
                                             <td><?php echo htmlspecialchars($row['adjustment_date']); ?></td>
                                             <td><?php echo htmlspecialchars($row['description']); ?></td>
                                             <td>
