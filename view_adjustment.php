@@ -3,21 +3,46 @@ session_start();
 include 'connection.php'; // Database connection
 include 'header_sidebar.php'; // Include header and sidebar
 
-// Define default start and end dates
-$startDate = isset($_GET['startDate']) ? $_GET['startDate'] : '';
-$endDate = isset($_GET['endDate']) ? $_GET['endDate'] : '';
+// Check if user is authenticated and authorized (e.g., only admins or specific roles can access this page)
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    // Redirect unauthorized users to login or error page
+    header("Location: unauthorized.php");
+    exit();
+}
 
-// Modify the query to filter by date range if specified
+// Define default start and end dates, sanitize and validate date inputs
+$startDate = isset($_GET['startDate']) ? htmlspecialchars($_GET['startDate']) : '';
+$endDate = isset($_GET['endDate']) ? htmlspecialchars($_GET['endDate']) : '';
+
+// Validate date formats (YYYY-MM-DD) if provided
+$startDateValid = $startDate && preg_match('/^\d{4}-\d{2}-\d{2}$/', $startDate);
+$endDateValid = $endDate && preg_match('/^\d{4}-\d{2}-\d{2}$/', $endDate);
+
+// Prepare and bind parameters for SQL query to filter by date range if specified
 $query = "SELECT * FROM StockAdjustments";
-if ($startDate && $endDate) {
-    $query .= " WHERE adjustment_date BETWEEN '$startDate' AND '$endDate'";
-} elseif ($startDate) {
-    $query .= " WHERE adjustment_date >= '$startDate'";
-} elseif ($endDate) {
-    $query .= " WHERE adjustment_date <= '$endDate'";
+$params = [];
+$conditions = [];
+
+if ($startDateValid) {
+    $conditions[] = "adjustment_date >= ?";
+    $params[] = $startDate;
+}
+if ($endDateValid) {
+    $conditions[] = "adjustment_date <= ?";
+    $params[] = $endDate;
+}
+
+if ($conditions) {
+    $query .= " WHERE " . implode(" AND ", $conditions);
 }
 $query .= " ORDER BY adjustment_date DESC";
-$result = $conn->query($query);
+
+$stmt = $conn->prepare($query);
+if ($params) {
+    $stmt->bind_param(str_repeat("s", count($params)), ...$params);
+}
+$stmt->execute();
+$result = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -75,10 +100,10 @@ $result = $conn->query($query);
                                     <?php while ($row = $result->fetch_assoc()): ?>
                                         <tr>
                                             <td><?php echo (int) $row['id']; ?></td>
-                                            <td><?php echo $row['adjustment_date']; ?></td>
+                                            <td><?php echo htmlspecialchars($row['adjustment_date']); ?></td>
                                             <td><?php echo htmlspecialchars($row['description']); ?></td>
                                             <td>
-                                                <a href="view_adjustment_details.php?id=<?php echo $row['id']; ?>" class="btn btn-sm btn-info">View</a>
+                                                <a href="view_adjustment_details.php?id=<?php echo urlencode($row['id']); ?>" class="btn btn-sm btn-info">View</a>
                                             </td>
                                         </tr>
                                     <?php endwhile; ?>
@@ -112,7 +137,9 @@ $result = $conn->query($query);
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
     <script>
         // Initialize the DataTable
-        const dataTable = new simpleDatatables.DataTable("#datatablesSimple");
+        document.addEventListener("DOMContentLoaded", function() {
+            const dataTable = new simpleDatatables.DataTable("#datatablesSimple");
+        });
     </script>
 </body>
 </html>

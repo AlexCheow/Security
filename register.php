@@ -13,12 +13,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check if passwords match
     if ($password !== $confirm_password) {
         $_SESSION['error'] = "Passwords do not match.";
+        header("Location: register.php");
+        exit();
     } else {
         // Hash the password for security
         $hashed_password = password_hash($password, PASSWORD_BCRYPT);
         
         // Insert the new user into the database
-        $query = "INSERT INTO Users (username, password, role) VALUES (?, ?, ?)";
+        $query = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
         $stmt = $conn->prepare($query);
         
         // Use hashed password instead of plain text
@@ -31,6 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             // Store error message in session if there's an issue with the insertion
             $_SESSION['error'] = "Error registering user: " . $conn->error;
+            header("Location: register.php");
+            exit();
         }
     }
 }
@@ -66,7 +70,7 @@ $conn->close();
         <div class="row justify-content-center">
             <div class="col-md-6 col-lg-4">
                 <div class="login-wrap p-0">
-                    <form action="" method="POST" class="signin-form" onsubmit="return validatePasswords()">
+                    <form action="" method="POST" class="signin-form" onsubmit="return validateForm()">
                         <div class="form-group">
                             <input type="text" name="username" class="form-control" placeholder="Username" required>
                         </div>
@@ -75,6 +79,11 @@ $conn->close();
                         </div>
                         <div class="form-group">
                             <input id="confirm_password" type="password" name="confirm_password" class="form-control" placeholder="Confirm Password" required>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="privacy_checkbox"> I agree to the <a href="privacy_policy.html" target="_blank">Privacy Policy</a>
+                            </label>
                         </div>
                         <div class="form-group">
                             <button type="submit" class="form-control btn btn-primary submit px-3">Register</button>
@@ -91,14 +100,21 @@ $conn->close();
 <script src="js/bootstrap.min.js"></script>
 <script src="js/main.js"></script>
 <script>
-function validatePasswords() {
+function validateForm() {
     const password = document.getElementById("password").value;
     const confirmPassword = document.getElementById("confirm_password").value;
+    const privacyCheckbox = document.getElementById("privacy_checkbox");
 
     if (password !== confirmPassword) {
         alert("Passwords do not match. Please try again.");
         return false;
     }
+
+    if (!privacyCheckbox.checked) {
+        alert("Please agree to the Privacy Policy before proceeding.");
+        return false;
+    }
+
     return true;
 }
 </script>

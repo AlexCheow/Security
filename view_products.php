@@ -3,6 +3,13 @@ session_start();
 include 'connection.php'; // Database connection
 include 'header_sidebar.php'; // Include header and sidebar
 
+// Check if user is authenticated and authorized (e.g., only admins can access this page)
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    // Redirect unauthorized users to login or error page
+    header("Location: unauthorized.php");
+    exit();
+}
+
 // Fetch products from the database
 $query = "SELECT * FROM Products";
 $result = $conn->query($query);
@@ -28,12 +35,12 @@ $result = $conn->query($query);
 
                 <!-- Display success or error messages -->
                 <?php if (isset($_SESSION['message'])): ?>
-                    <div class="alert alert-success"><?php echo $_SESSION['message']; unset($_SESSION['message']); ?></div>
+                    <div class="alert alert-success"><?php echo htmlspecialchars($_SESSION['message']); unset($_SESSION['message']); ?></div>
                 <?php endif; ?>
 
-                <?php /*if (isset($_SESSION['error'])): ?>
-                    <div class="alert alert-danger"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></div>
-                <?php endif; */ ?>
+                <?php if (isset($_SESSION['error'])): ?>
+                    <div class="alert alert-danger"><?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?></div>
+                <?php endif; ?>
 
                 <!-- Add New Product Button -->
                 <div class="mb-3">
@@ -67,8 +74,8 @@ $result = $conn->query($query);
                                         <td><?php echo htmlspecialchars($product['price']); ?></td>
                                         <td><?php echo htmlspecialchars($product['stock']); ?></td>
                                         <td>
-                                            <a href="edit_product.php?product_id=<?php echo $product['id']; ?>" class="btn btn-warning btn-sm">Edit</a>
-                                            <a href="delete_product.php?product_id=<?php echo $product['id']; ?>" 
+                                            <a href="edit_product.php?product_id=<?php echo urlencode($product['id']); ?>" class="btn btn-warning btn-sm">Edit</a>
+                                            <a href="delete_product.php?product_id=<?php echo urlencode($product['id']); ?>" 
                                                onclick="return confirm('Are you sure you want to delete this product?');" 
                                                class="btn btn-danger btn-sm">Delete</a>
                                         </td>
