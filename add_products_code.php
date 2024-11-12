@@ -14,6 +14,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("ssdi", $name, $description, $price, $stock);
 
     if ($stmt->execute()) {
+        // Log the Action
+        $user_id = $_SESSION['user_id'];
+        $role = $_SESSION['role'];
+        $action = "Added Product : $name";
+
+        $sql = "INSERT INTO logs (user_id, role, action) VALUES (?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("iss", $user_id, $role, $action);
+        $stmt->execute();
+
         // Redirect to view_products.php after successful addition
         header("Location: view_products.php");
         exit();
