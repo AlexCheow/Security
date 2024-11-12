@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 include 'connection.php'; // Database connection
 include 'header_sidebar.php'; // Include header and sidebar
 
