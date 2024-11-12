@@ -3,10 +3,22 @@ session_start();
 include 'connection.php'; // Database connection
 include 'header_sidebar.php'; // Include header and sidebar
 
-// Get the adjustment ID from the URL
-$adjustment_id = $_GET['id'];
+// Check if the user is authenticated and has the necessary permissions
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    // Redirect unauthorized users to login or error page
+    header("Location: unauthorized.php");
+    exit();
+}
 
-// Fetch adjustment details from the database
+// Validate and sanitize the adjustment ID from the URL
+if (!isset($_GET['id']) || !filter_var($_GET['id'], FILTER_VALIDATE_INT)) {
+    $_SESSION['error'] = "Invalid adjustment ID.";
+    header("Location: view_adjustment.php");
+    exit();
+}
+$adjustment_id = (int) $_GET['id'];
+
+// Fetch adjustment details from the database using prepared statements
 $query = "SELECT sa.id AS adjustment_id, sa.adjustment_date, sa.description, sad.product_id, 
           p.name AS product_name, sad.adjustment_type, sad.quantity 
           FROM StockAdjustments sa 
@@ -43,7 +55,7 @@ $result = $stmt->get_result();
                 <div class="card mb-4">
                     <div class="card-header">
                         <i class="fas fa-info-circle me-1"></i>
-                        Details for Adjustment ID: <?php echo $adjustment_id; ?>
+                        Details for Adjustment ID: <?php echo htmlspecialchars($adjustment_id); ?>
                     </div>
                     <div class="card-body">
                         <table class="table table-bordered">
@@ -59,8 +71,8 @@ $result = $stmt->get_result();
                                     <?php while ($row = $result->fetch_assoc()): ?>
                                         <tr>
                                             <td><?php echo htmlspecialchars($row['product_name']); ?></td>
-                                            <td><?php echo ucfirst($row['adjustment_type']); ?></td>
-                                            <td><?php echo $row['quantity']; ?></td>
+                                            <td><?php echo htmlspecialchars(ucfirst($row['adjustment_type'])); ?></td>
+                                            <td><?php echo htmlspecialchars($row['quantity']); ?></td>
                                         </tr>
                                     <?php endwhile; ?>
                                 <?php else: ?>

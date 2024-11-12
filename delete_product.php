@@ -2,11 +2,18 @@
 session_start();
 include 'connection.php'; // Database connection
 
-// Check if product_id is set in the URL
-if (isset($_GET['product_id'])) {
-    $product_id = $_GET['product_id'];
+// Verify that user is logged in and has the appropriate role (e.g., admin)
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    $_SESSION['error'] = "Unauthorized access.";
+    header("Location: view_products.php");
+    exit();
+}
 
-    // Prepare the delete statement
+// Check if product_id is provided in the URL and validate it
+if (isset($_GET['product_id']) && is_numeric($_GET['product_id'])) {
+    $product_id = (int)$_GET['product_id']; // Cast to int to prevent SQL injection
+
+    // Prepare the delete statement securely
     $query = "DELETE FROM Products WHERE id = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $product_id);
@@ -26,18 +33,31 @@ if (isset($_GET['product_id'])) {
 
         // Set a success message in the session
         $_SESSION['message'] = "Product deleted successfully.";
+
+        // Log the action
+        $user_id = $_SESSION['user_id'];
+        $role = $_SESSION['role'];
+        $action = "Deleted Product ID: $product_id";
+        
+        $log_query = "INSERT INTO logs (user_id, role, action) VALUES (?, ?, ?)";
+        $log_stmt = $conn->prepare($log_query);
+        $log_stmt->bind_param("iss", $user_id, $role, $action);
+        $log_stmt->execute();
     } else {
         // Set an error message in the session if deletion fails
-        $_SESSION['error'] = "Error deleting product: " . $conn->error;
+        $_SESSION['error'] = "Error deleting product: " . htmlspecialchars($conn->error);
     }
-
+    
     // Redirect to the products list page
     header("Location: view_products.php");
     exit();
 } else {
-    // Redirect if product_id is not set
-    $_SESSION['error'] = "No product ID provided.";
+    // Redirect with error if product_id is not valid
+    $_SESSION['error'] = "Invalid product ID provided.";
     header("Location: view_products.php");
     exit();
 }
+
+// Close the database connection
+$conn->close();
 ?>
