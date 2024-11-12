@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['csrf_token']) && $_PO
         // Log the action
         $user_id = $_SESSION['user_id'];
         $role = $_SESSION['role'];
-        $action = "Added stock adjustment ID: ". $adjustment_id;
+        $action = "Added Stock Adjustment ID: ". $adjustment_id;
 
 
         $log_query = "INSERT INTO logs (user_id, role, action) VALUES (?, ?, ?)";
