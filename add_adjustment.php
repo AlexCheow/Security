@@ -1,3 +1,18 @@
+<?php
+session_start();
+include 'connection.php'; // Database connection
+include 'header_sidebar.php'; // Include header and sidebar
+
+// Generate CSRF token if not already generated
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+// Fetch products for selection
+$product_query = "SELECT id, name FROM Products";
+$product_result = $conn->query($product_query);
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,8 +33,9 @@
             <div class="container-fluid px-4">
                 <h1 class="mt-4">Add New Stock Adjustment</h1>
 
+                <!-- Display error message if any -->
                 <?php if (isset($_SESSION['error'])): ?>
-                    <div class="alert alert-danger"><?php //echo $_SESSION['error']; unset($_SESSION['error']); ?></div>
+                    <div class="alert alert-danger"><?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?></div>
                 <?php endif; ?>
 
                 <div class="card mb-4">
@@ -29,6 +45,7 @@
                     </div>
                     <div class="card-body">
                         <form method="POST" action="add_adjustment_code.php">
+                            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>" />
                             <div class="mb-3">
                                 <label for="adjustment_date" class="form-label">Adjustment Date</label>
                                 <input type="date" class="form-control" id="adjustment_date" name="adjustment_date" required>
@@ -44,10 +61,8 @@
                                     <select name="product[]" class="form-control" required>
                                         <option value="">Select Product</option>
                                         <?php
-                                        // Fetch products for selection
-                                        include 'connection.php';
-                                        $product_query = "SELECT id, name FROM Products";
-                                        $product_result = $conn->query($product_query);
+                                        // Fetch products from database for selection
+                                        $product_result->data_seek(0); // Reset pointer
                                         while ($product = $product_result->fetch_assoc()): ?>
                                             <option value="<?php echo $product['id']; ?>"><?php echo htmlspecialchars($product['name']); ?></option>
                                         <?php endwhile; ?>
@@ -57,7 +72,7 @@
                                     <input type="text" name="adjustment_type[]" class="form-control" value="Stock Adjustment" readonly>
                                     
                                     <label for="quantity" class="form-label mt-2">Quantity</label>
-                                    <input type="number" name="quantity[]" class="form-control" required>
+                                    <input type="number" name="quantity[]" class="form-control" min="1" required>
                                 </div>
                             </div>
 
@@ -98,7 +113,7 @@
                 <select name="product[]" class="form-control" required>
                     <option value="">Select Product</option>
                     <?php
-                    $product_result->data_seek(0); // Reset result pointer
+                    $product_result->data_seek(0); // Reset pointer
                     while ($product = $product_result->fetch_assoc()): ?>
                         <option value="<?php echo $product['id']; ?>"><?php echo htmlspecialchars($product['name']); ?></option>
                     <?php endwhile; ?>
@@ -108,10 +123,15 @@
                 <input type="text" name="adjustment_type[]" class="form-control" value="Stock Adjustment" readonly>
 
                 <label class="form-label mt-2">Quantity</label>
-                <input type="number" name="quantity[]" class="form-control" required>
+                <input type="number" name="quantity[]" class="form-control" min="1" required>
             `;
             document.getElementById('productAdjustments').appendChild(adjustmentDiv);
         }
     </script>
 </body>
 </html>
+
+<?php
+// Close the database connection
+$conn->close();
+?>

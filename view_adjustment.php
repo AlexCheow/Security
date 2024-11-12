@@ -3,8 +3,8 @@ session_start();
 include 'connection.php'; // Database connection
 include 'header_sidebar.php'; // Include header and sidebar
 
-// Check if user is authenticated and authorized (e.g., only admins or specific roles can access this page)
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+
+if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'staff'])) {
     // Redirect unauthorized users to login or error page
     header("Location: unauthorized.php");
     exit();

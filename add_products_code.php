@@ -3,7 +3,7 @@ session_start();
 include 'connection.php'; // Database connection
 
 // Check if the user is authenticated and authorized
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'staff'])) {
     // Redirect unauthorized users to an error or login page
     header("Location: unauthorized.php");
     exit();
@@ -46,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         }
         $stmt->close();
+    
 
     if ($stmt->execute()) {
         $product_id = $conn->insert_id;
@@ -68,6 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['error'] = "Database error: " . $conn->error;
         header("Location: add_products.php");
         exit();
+    }
     }
 }
 
