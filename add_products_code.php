@@ -14,14 +14,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("ssdi", $name, $description, $price, $stock);
 
     if ($stmt->execute()) {
+        $product_id = $conn->insert_id;
         // Log the Action
         $user_id = $_SESSION['user_id'];
         $role = $_SESSION['role'];
-        $action = "Added Product : $name";
+        $action = "Add New Product";
+        $details = "Added Product ID: $product_id";
 
-        $sql = "INSERT INTO logs (user_id, role, action) VALUES (?, ?, ?)";
+        $sql = "INSERT INTO logs (user_id, role, action, details) VALUES (?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("iss", $user_id, $role, $action);
+        $stmt->bind_param("isss", $user_id, $role, $action, $details);
         $stmt->execute();
 
         // Redirect to view_products.php after successful addition
