@@ -58,8 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     } catch (Exception $e) {
         $conn->rollback();
-        //$_SESSION['error'] = "Error adding adjustment: " . $e->getMessage();
-        //header("Location: add_adjustment.php");
+        $_SESSION['error'] = "Error adding adjustment: " . $e->getMessage();
+        header("Location: add_adjustment.php");
         exit();
     }
 }

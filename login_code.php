@@ -32,8 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     } else {
         // Invalid credentials, redirect back to login page with error
-        //$error = "Invalid username or password";
-        //header('Location: index.php?error=' . urlencode($error));
+        $error = "Invalid username or password";
+        header('Location: index.php?error=' . urlencode($error));
         exit();
     }
 }

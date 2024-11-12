@@ -11,18 +11,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $role = 'staff';
 
     // Check if passwords match
-    // if ($password !== $confirm_password) {
-    //     $_SESSION['error'] = "Passwords do not match.";
-    // } else {
+    if ($password !== $confirm_password) {
+        $_SESSION['error'] = "Passwords do not match.";
+    } else {
         // Hash the password for security
-        // $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
         
         // Insert the new user into the database
         $query = "INSERT INTO Users (username, password, role) VALUES (?, ?, ?)";
         $stmt = $conn->prepare($query);
         
-        // Bypass hashed password and use plain text
-        $stmt->bind_param("sss", $username, $password, $role);
+        // Use hashed password instead of plain text
+        $stmt->bind_param("sss", $username, $hashed_password, $role);
         
         if ($stmt->execute()) {
             // Redirect to login page on successful registration
@@ -30,9 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         } else {
             // Store error message in session if there's an issue with the insertion
-            // $_SESSION['error'] = "Error registering user: " . $conn->error;
+            $_SESSION['error'] = "Error registering user: " . $conn->error;
         }
-    // }
+    }
 }
 
 // Close the database connection
@@ -56,17 +56,17 @@ $conn->close();
             <div class="col-md-6 text-center mb-5">
                 <h1 class="heading-section">Register</h1>
                 <?php
-                // if (isset($_SESSION['error'])) {
-                //     echo "<div style='color:red;'>" . htmlspecialchars($_SESSION['error']) . "</div>";
-                //     unset($_SESSION['error']);
-                // }
+                if (isset($_SESSION['error'])) {
+                    echo "<div style='color:red;'>" . htmlspecialchars($_SESSION['error']) . "</div>";
+                    unset($_SESSION['error']);
+                }
                 ?>
             </div>
         </div>
         <div class="row justify-content-center">
             <div class="col-md-6 col-lg-4">
                 <div class="login-wrap p-0">
-                    <form action="" method="POST" class="signin-form">
+                    <form action="" method="POST" class="signin-form" onsubmit="return validatePasswords()">
                         <div class="form-group">
                             <input type="text" name="username" class="form-control" placeholder="Username" required>
                         </div>
@@ -91,16 +91,16 @@ $conn->close();
 <script src="js/bootstrap.min.js"></script>
 <script src="js/main.js"></script>
 <script>
-// function validatePasswords() {
-//     const password = document.getElementById("password").value;
-//     const confirmPassword = document.getElementById("confirm_password").value;
+function validatePasswords() {
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirm_password").value;
 
-//     if (password !== confirmPassword) {
-//         alert("Passwords do not match. Please try again.");
-//         return false;
-//     }
-//     return true;
-// }
+    if (password !== confirmPassword) {
+        alert("Passwords do not match. Please try again.");
+        return false;
+    }
+    return true;
+}
 </script>
 </body>
 </html>
