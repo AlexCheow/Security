@@ -1,3 +1,20 @@
+<?php
+session_start();
+include 'connection.php'; // Database connection
+include 'header_sidebar.php'; // Include header and sidebar
+
+// Check if the user is authorized
+if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'staff'])) {
+    header("Location: unauthorized.php");
+    exit();
+}
+
+// Fetch products from the database
+$query = "SELECT * FROM logs";
+$result = $conn->query($query);
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,8 +30,6 @@
 </head>
 <body class="sb-nav-fixed">
     
-    <?php include 'header_sidebar.php'; ?>
-
     <div id="layoutSidenav_content" style="margin-left: 11%; margin-top:3%">
         <main>
             <div class="container-fluid px-4">
@@ -84,36 +99,38 @@
                 <div class="card mb-4">
                     <div class="card-header">
                         <i class="fas fa-table me-1"></i>
-                        DataTable Example
+                        Activity Logs
                     </div>
                     <div class="card-body">
                         <table id="datatablesSimple">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Position</th>
-                                    <th>Office</th>
-                                    <th>Age</th>
-                                    <th>Start date</th>
-                                    <th>Salary</th>
+                                <th>ID</th>
+                                <th>User ID</th>
+                                <th>Role</th>
+                                <th>Action</th>
+                                <th>Timestamp</th>
                                 </tr>
                             </thead>
                             <tfoot>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Position</th>
-                                    <th>Office</th>
-                                    <th>Age</th>
-                                    <th>Start date</th>
-                                    <th>Salary</th>
+                                <th>ID</th>
+                                <th>User ID</th>
+                                <th>Role</th>
+                                <th>Action</th>
+                                <th>Timestamp</th>
                                 </tr>
                             </tfoot>
                             <tbody>
-                                <tr><td>Tiger Nixon</td><td>System Architect</td><td>Edinburgh</td><td>61</td><td>2011/04/25</td><td>$320,800</td></tr>
-                                <tr><td>Garrett Winters</td><td>Accountant</td><td>Tokyo</td><td>63</td><td>2011/07/25</td><td>$170,750</td></tr>
-                                <tr><td>Ashton Cox</td><td>Junior Technical Author</td><td>San Francisco</td><td>66</td><td>2009/01/12</td><td>$86,000</td></tr>
-                                <tr><td>Cedric Kelly</td><td>Senior Javascript Developer</td><td>Edinburgh</td><td>22</td><td>2012/03/29</td><td>$433,060</td></tr>
-                                <!-- Add more rows as needed -->
+                                <?php while ($row = $result->fetch_assoc()): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($row['id']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['user_id']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['role']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['action']); ?></td>
+                                        <td><?php echo htmlspecialchars($row['timestamp']); ?></td>
+                                    </tr>
+                                <?php endwhile; ?>
                             </tbody>
                         </table>
                     </div>

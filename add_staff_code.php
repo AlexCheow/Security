@@ -5,7 +5,7 @@ include 'connection.php'; // Database connection
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     $_SESSION['error'] = "Unauthorized access.";
-    header("Location: view_staff.php");
+    header("Location: unauthorized.php");
     exit();
 }
 

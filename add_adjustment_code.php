@@ -2,6 +2,13 @@
 session_start();
 include 'connection.php'; // Database connection
 
+// Check if the user is authenticated and authorized
+if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'staff'])) {
+    // Redirect unauthorized users to an error or login page
+    header("Location: unauthorized.php");
+    exit();
+}
+
 // Check if the user is authenticated and has a valid CSRF token
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['csrf_token']) && $_POST['csrf_token'] === $_SESSION['csrf_token']) {
     // Sanitize and validate input data
