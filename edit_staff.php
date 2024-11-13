@@ -3,6 +3,13 @@ session_start();
 include 'connection.php'; // Database connection
 include 'header_sidebar.php'; // Include header and sidebar
 
+// Check if the user is authenticated and has the appropriate role (e.g., admin)
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    $_SESSION['error'] = "Unauthorized access.";
+    header("Location: unauthorized.php");
+    exit();
+}
+
 // Check if product_id is provided in the URL
 if (isset($_GET['user_id'])) {
     $user_id = $_GET['user_id'];

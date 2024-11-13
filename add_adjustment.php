@@ -3,6 +3,13 @@
 include 'connection.php'; // Database connection
 include 'header_sidebar.php'; // Include header and sidebar
 
+// Check if the user is authenticated and authorized
+if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'staff'])) {
+    // Redirect unauthorized users to an error or login page
+    header("Location: unauthorized.php");
+    exit();
+}
+
 // Generate CSRF token if not already generated
 if (!isset($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));

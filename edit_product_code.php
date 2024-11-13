@@ -2,6 +2,13 @@
 session_start();
 include 'connection.php'; // Database connection
 
+// Check if the user is authenticated and authorized
+if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'staff'])) {
+    // Redirect unauthorized users to an error or login page
+    header("Location: unauthorized.php");
+    exit();
+}
+
 // Check if product_id is provided in the URL
 if (isset($_GET['product_id']) && $_SERVER['REQUEST_METHOD'] === 'POST') {
     $product_id = $_GET['product_id'];
