@@ -88,6 +88,9 @@ $conn->close();
                         <div class="form-group">
                             <button type="submit" class="form-control btn btn-primary submit px-3">Register</button>
                         </div>
+                        <div class="form-group">
+                            <a href="index.php" class="form-control btn btn-secondary submit px-3">Back to Login</a>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -104,6 +107,12 @@ function validateForm() {
     const password = document.getElementById("password").value;
     const confirmPassword = document.getElementById("confirm_password").value;
     const privacyCheckbox = document.getElementById("privacy_checkbox");
+
+    const passwordStrengthRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordStrengthRegex.test(password)) {
+        alert("Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.");
+        return false;
+    }
 
     if (password !== confirmPassword) {
         alert("Passwords do not match. Please try again.");
