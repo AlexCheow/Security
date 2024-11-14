@@ -27,6 +27,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Verify the entered password with the hashed password in the database
         if (password_verify($password, $user['password'])) {
+
+            session_regenerate_id(true);
+
             // Password is correct, set session variables
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
