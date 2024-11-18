@@ -9,7 +9,7 @@ Installed the latest version of XAMPP on https://www.apachefriends.org/download.
 7) Create a database called "admin"
 8) Find the file called "admin.sql" in GitHub and import it into the database "admin".
 9) After that run "http://localhost/security/" and you will be able to view the website's login page
-10) You can create a new account to log in or you can use an existing user to login
+10) You can create a new account to log in or you can use an existing user to login.
   Admin Account - Username: admin
                   Password: admin123
   Staff Account - Username: staff
