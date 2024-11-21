@@ -29,7 +29,7 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['role'])) {
                 <li><a class="dropdown-item" href="#!">Settings</a></li>
                 <li><a class="dropdown-item" href="#!">Activity Log</a></li>
                 <li><hr class="dropdown-divider" /></li>
-                <li><a class="dropdown-item" href="logout.php">Logout</a></li>
+                <li><a class="dropdown-item" href="logout.php" onclick="return confirmLogout()">Logout</a></li>
             </ul>
         </li>
     </ul>
@@ -78,7 +78,7 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['role'])) {
                         </a>
                     <?php endif; ?>
                     
-                    <a class="nav-link" href="logout.php">
+                    <a class="nav-link" href="logout.php" onclick="return confirmLogout()">
                         <div class="sb-nav-link-icon"><i class="fas fa-sign-out-alt"></i></div>
                         Logout
                     </a>
@@ -94,6 +94,10 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['role'])) {
 
 <!-- JavaScript to display current time -->
 <script>
+    function confirmLogout() {
+        return confirm("Are you sure you want to logout?");
+    }
+
     function updateTime() {
         const now = new Date();
         const hours = now.getHours().toString().padStart(2, '0');

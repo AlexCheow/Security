@@ -58,6 +58,7 @@ $result = $conn->query($query);
                         <table id="datatablesSimple">
                             <thead>
                                 <tr>
+                                    <th>Staff ID</th>
                                     <th>Username</th>
                                     <th>Role</th>
                                     <th>Created_at</th>
@@ -67,6 +68,7 @@ $result = $conn->query($query);
                             <tbody>
                                 <?php while ($user = $result->fetch_assoc()): ?>
                                     <tr>
+                                        <td><?php echo htmlspecialchars($user['id']); ?></td>
                                         <td><?php echo htmlspecialchars($user['username']); ?></td>
                                         <td><?php echo htmlspecialchars($user['role']); ?></td>
                                         <td><?php echo htmlspecialchars($user['created_at']); ?></td>
