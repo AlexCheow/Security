@@ -11,6 +11,7 @@ if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['admin', 'staf
 }
 
 // Generate CSRF token if not already generated
+//CSRF token to prevent cross-site request forgery attacks
 if (!isset($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
