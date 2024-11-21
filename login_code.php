@@ -28,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Verify the entered password with the hashed password in the database
         if (password_verify($password, $user['password'])) {
 
+            //session_start() is used to start a session, and session_regenerate_id(true) is implemented for session fixation protection.
             session_regenerate_id(true);
 
             // Password is correct, set session variables
