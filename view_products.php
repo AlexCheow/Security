@@ -58,6 +58,7 @@ $result = $conn->query($query);
                         <table id="datatablesSimple">
                             <thead>
                                 <tr>
+                                    <th>Product ID</th>
                                     <th>Name</th>
                                     <th>Description</th>
                                     <th>Price</th>
@@ -68,6 +69,7 @@ $result = $conn->query($query);
                             <tbody>
                                 <?php while ($product = $result->fetch_assoc()): ?>
                                     <tr>
+                                        <td><?php echo htmlspecialchars($product['id']); ?></td>
                                         <td><?php echo htmlspecialchars($product['name']); ?></td>
                                         <td><?php echo htmlspecialchars($product['description']); ?></td>
                                         <td><?php echo htmlspecialchars($product['price']); ?></td>
